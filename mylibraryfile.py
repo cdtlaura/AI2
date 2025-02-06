@@ -369,56 +369,52 @@ import streamlit as st
 
 # Streamlit UI
 import streamlit as st
-import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
+from sklearn.metrics.pairwise import cosine_similarity
 
-# CSS to enhance the UI
-st.markdown("""
-    <style>
-        body {
-            background-color: #F5F5F5;
-        }
-        .main {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-        }
-        h1, h2, h3 {
-            color: #333333;
-        }
-        .sidebar .sidebar-content {
-            background-color: #F0F0F0;
-        }
-    </style>
-""", unsafe_allow_html=True)
+# Assume categorizeBooks and categories are defined elsewhere in your code.
 
-st.title("📚 Book Recommendation and Categorization System")
+# Function to get related topics using cosine similarity
+def get_related_topics(topic_index, topic_similarities, categories):
+    similarities = topic_similarities[topic_index]
+    related_topic_indices = similarities.argsort()[-3:-1]  # Get top 2 related topics
+    related_topics = [categories[i] for i in related_topic_indices]
+    return related_topics
 
-st.sidebar.header("About")
-st.sidebar.write("This app recommends books and automatically categorizes them using machine learning.")
+# Sample cosine similarity (replace with your model-generated data)
+topic_similarities = cosine_similarity(kmeans.cluster_centers_)  # Replace with your logic
 
-st.subheader("🔍 Enter the Product ID")
-product_id = st.number_input("Enter Product ID:", min_value=0, max_value=500, value=1, step=1)
-num_recommendations = st.slider("Number of Recommendations:", 1, 10, 5)
+# Streamlit UI
+st.title("📚 Book Categorizer with Related Topics")
+st.header("🔍 Automatically Categorize Books by Their Description")
 
-if st.button("Recommend"):
-    # Sample recommendation logic
-    st.success(f"Displaying {num_recommendations} recommendations for product ID {product_id}.")
+st.write("""
+Enter a description of the book, and this app will categorize it into a relevant topic!
+""")
 
-# Categorization Section
-st.subheader("📂 Book Categorizer")
-st.write("Enter a book description below, and the app will categorize it automatically.")
+# Input field for book description
+bookdescription = st.text_area(
+    "Book Description:",
+    placeholder="Type or paste the book description here...",
+    height=150
+)
 
-description = st.text_area("Book Description:")
-if st.button("Categorize"):
-    st.info(f"Categorizing: {description}")
+# Button for categorization
+if st.button("Categorize Book"):
+    if len(bookdescription.strip()) == 0:
+        st.error("⚠️ Please enter a valid book description!")
+    else:
+        # Call to categorizeBooks (replace with your logic)
+        category_index = categorizeBooks(bookdescription)
+        category = categories[category_index]
 
-# Example of displaying outputs in a nicer format
-st.markdown("---")
-st.write("### 📋 Example Output (replace this with your dynamic output)")
-sample_output = pd.DataFrame({
-    "Book Name": ["Book A", "Book B"],
-    "Category": ["Web Development", "Data Science"]
-})
-st.table(sample_output)
+        # Get related topics
+        related_topics = get_related_topics(category_index, topic_similarities, categories)
+
+        # Display the result
+        st.success(f"📖 **Main Category:** {category}")
+        st.write("🔗 **Related Topics:**")
+        for topic in related_topics:
+            st.markdown(f"- {topic}")
+
+        # Extra note for visual structure
+        st.write("---")
