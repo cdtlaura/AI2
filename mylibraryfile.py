@@ -368,25 +368,57 @@ import streamlit as st
 
 
 # Streamlit UI
-st.title("📚 Book Categorizer")
-st.header("🔍 Automatically Categorize Books by Their Description")
+import streamlit as st
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
 
-st.write("""
-Enter a description of the book, and this app will categorize it into a relevant topic!
-""")
+# CSS to enhance the UI
+st.markdown("""
+    <style>
+        body {
+            background-color: #F5F5F5;
+        }
+        .main {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #333333;
+        }
+        .sidebar .sidebar-content {
+            background-color: #F0F0F0;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-# Input field for book description
-bookdescription = st.text_area(
-    "Book Description:",
-    placeholder="Type or paste the book description here...",
-    height=150
-)
+st.title("📚 Book Recommendation and Categorization System")
 
-# Button for categorization
-if st.button("Categorize Book"):
-    if len(bookdescription.strip()) == 0:
-        st.error("⚠️ Please enter a valid book description!")
-    else:
-        # Call to categorizeBooks (assuming it's a function in your code)
-        category = categorizeBooks(bookdescription)
-        st.success(f"📖 The book belongs to: **{category}**")
+st.sidebar.header("About")
+st.sidebar.write("This app recommends books and automatically categorizes them using machine learning.")
+
+st.subheader("🔍 Enter the Product ID")
+product_id = st.number_input("Enter Product ID:", min_value=0, max_value=500, value=1, step=1)
+num_recommendations = st.slider("Number of Recommendations:", 1, 10, 5)
+
+if st.button("Recommend"):
+    # Sample recommendation logic
+    st.success(f"Displaying {num_recommendations} recommendations for product ID {product_id}.")
+
+# Categorization Section
+st.subheader("📂 Book Categorizer")
+st.write("Enter a book description below, and the app will categorize it automatically.")
+
+description = st.text_area("Book Description:")
+if st.button("Categorize"):
+    st.info(f"Categorizing: {description}")
+
+# Example of displaying outputs in a nicer format
+st.markdown("---")
+st.write("### 📋 Example Output (replace this with your dynamic output)")
+sample_output = pd.DataFrame({
+    "Book Name": ["Book A", "Book B"],
+    "Category": ["Web Development", "Data Science"]
+})
+st.table(sample_output)
