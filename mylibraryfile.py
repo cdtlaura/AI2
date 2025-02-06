@@ -369,25 +369,16 @@ import streamlit as st
 
 # Streamlit UI
 st.title("Book Categorizer")
-372	+
 st.header("Automatically categorize books by their description")
-373	+
 st.write("Enter a description of the book, and this app will categorize it into a relevant topic!")
-374	+
 
-
-375	+
 bookdescription = st.text_area("Book Description:", placeholder="Type or paste the book description here...", height=150)
-376	+
-377	+
+
 if st.button("Categorize Book"):
-378	+
     if len(bookdescription.strip()) == 0:
-379	+
         st.error("Please enter a valid book description!")
-380	+
     else:
-381	+
         category = categorizeBooks(bookdescription)
-382	+
         st.success(f"Book Category: {category}")
+
+
